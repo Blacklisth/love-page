@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 Jeux + Chat Couple Ultime 💕</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fad0c4 100%);
+            min-height: 100vh; padding: 15px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        .section { 
+            background: white; border-radius: 25px; padding: 30px; 
+            margin-bottom: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); 
+        }
+        h1 { color: #e91e63; font-size: 2.5em; text-align: center; margin-bottom: 15px; text-shadow: 2px 2px 8px rgba(0,0,0,0.1); }
+        h2 { color: #c44569; margin-bottom: 20px; font-size: 1.9em; text-align: center; font-style: italic; }
+        
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        
+        button { padding: 12px 20px; border: none; border-radius: 25px; font-size: 1em; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 15px rgba(0,0,0,0.2); margin: 5px; }
+        .action-btn { background: linear-gradient(45deg, #ff6b6b, #ee5a52); color: white; }
+        .verite-btn { background: linear-gradient(45deg, #4ecdc4, #44a08d); color: white; }
+        
+        /* Boutons de mode */
+        .mode-btn { background: #eee; filter: grayscale(1); }
+        .mode-btn.active { background: white; filter: grayscale(0); border: 2px solid #e91e63; }
+
+        .result { 
+            min-height: 80px; margin: 15px auto; padding: 20px; border-radius: 20px; 
+            font-size: 1.1em; opacity: 0; transform: scale(0.95); transition: all 0.4s; 
+            display: flex; align-items: center; justify-content: center; text-align: center;
+        }
+        .result.show { opacity: 1; transform: scale(1); background: #fff5f7; border: 2px dashed #e91e63; }
+        
+        /* CHAT */
+        .chat-container { height: 400px; border-radius: 20px; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.1); border: 1px solid #eee; }
+        .chat-messages { height: 320px; overflow-y: auto; padding: 20px; background: #f8f9fa; display: flex; flex-direction: column; }
+        .message { margin-bottom: 15px; display: flex; flex-direction: column; animation: slideIn 0.3s ease-out; }
+        .message.moi { align-items: flex-end; }
+        .message.ami { align-items: flex-start; }
+        .message-bulle { max-width: 80%; padding: 12px 18px; border-radius: 20px; position: relative; word-wrap: break-word; }
+        .message.moi .message-bulle { background: linear-gradient(45deg, #74b9ff, #0984e3); color: white; border-bottom-right-radius: 5px; }
+        .message.ami .message-bulle { background: linear-gradient(45deg, #a8e6cf, #88d8a3); color: #2d3436; border-bottom-left-radius: 5px; }
+        .message-time { font-size: 0.7em; opacity: 0.6; margin-top: 4px; }
+        
+        .chat-input-container { display: flex; padding: 10px; background: white; gap: 5px; }
+        .chat-input { flex: 1; padding: 10px 15px; border: 2px solid #fecfef; border-radius: 25px; outline: none; }
+        .chat-send { background: #00b894; color: white; padding: 10px 15px; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 768px) { .grid-4 { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💕 Jeux + Chat Couple Ultime 💕</h1>
+        
+        <div class="grid-4">
+            <div class="section">
+                <h2>🎲 Action/Vérité</h2>
+                <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px;">
+                    <button class="mode-btn active" id="btn-romantique" onclick="setMode('romantique')">😘 Romantique</button>
+                    <button class="mode-btn" id="btn-hot" onclick="setMode('hot')">🔥 Hot</button>
+                </div>
+                <div style="display: flex; justify-content: center;">
+                    <button class="action-btn" onclick="getRandom('action')">🎲 ACTION</button>
+                    <button class="verite-btn" onclick="getRandom('verite')">💬 VÉRITÉ</button>
+                </div>
+                <div id="result" class="result">Choisissez une action ou une vérité !</div>
+            </div>
+
+            <div class="section">
+                <h2>🎮 Idée Jeu</h2>
+                <button class="action-btn" onclick="genererJeuCouple()" style="width: 100%;">✨ NOUVELLE IDÉE</button>
+                <div id="jeuResult" class="result"></div>
+            </div>
+
+            <div class="section">
+                <h2>💝 Acrostiche</h2>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <input type="text" id="nomAccrostiche" placeholder="Prénom..." maxlength="12" style="flex: 1; padding: 10px; border: 2px solid #fecfef; border-radius: 20px;">
+                    <button class="verite-btn" onclick="genererAccrostiche()">💝</button>
+                </div>
+                <div id="accrosticheResult" class="result" style="display: block; font-weight: bold;"></div>
+            </div>
+
+            <div class="section">
+                <h2>💬 Chat Privé</h2>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages"></div>
+                    <div class="chat-input-container">
+                        <input type="text" id="chatInput" class="chat-input" placeholder="Message... 💕">
+                        <button class="chat-send" onclick="envoyerMessage()">➤</button>
+                    </div>
+                </div>
+                <button class="chat-clear" onclick="clearChat()" style="background:none; border:none; color:#999; font-size:0.8em; cursor:pointer; margin-top:10px;">🗑️ Effacer l'historique</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGIQUE JEUX ---
+        let currentMode = 'romantique';
+        const actions = { 
+            romantique: ["Fais un compliment original 💋","Fais un bisou à la caméra 😘","Chante une chanson d'amour 🎤","Danse pendant 20 secondes 💃","Fais ton plus beau sourire sexy 😏"], 
+            hot: ["Enlève un vêtement 🔥","Raconte un fantasme 😈","Prends une pose sexy 📸","Décris une envie coquine 🤫"] 
+        };
+        const verites = { 
+            romantique: ["Quel est ton meilleur souvenir avec moi ? 💕","Qu'est-ce qui t'a fait craquer chez moi ? 😍","Quel est ton surnom secret pour moi ? 🤫"], 
+            hot: ["Quelle est ta position préférée ? 🔥","L'endroit le plus osé où tu voudrais le faire ? 📍","Quelle tenue me va le mieux ? 👗"] 
+        };
+
+        function setMode(mode) { 
+            currentMode = mode; 
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${mode}`).classList.add('active');
+            document.getElementById('result').classList.remove('show');
+        }
+
+        function getRandom(type) {
+            const liste = type === 'action' ? actions[currentMode] : verites[currentMode];
+            const randomIdx = Math.floor(Math.random() * liste.length);
+            const resDiv = document.getElementById('result');
+            resDiv.textContent = liste[randomIdx];
+            resDiv.className = 'result show';
+        }
+
+        function genererJeuCouple() {
+            const jeux = [
+                {nom:"📱 20 Questions", desc:"Devine à quoi je pense en 20 questions (OUI/NON) !"},
+                {nom:"👀 Action Regard", desc:"Le premier qui cligne des yeux a un gage !"},
+                {nom:"📝 Quiz Nous", desc:"Pose une question sur notre relation, l'autre doit trouver."}
+            ];
+            const jeu = jeux[Math.floor(Math.random() * jeux.length)];
+            const resDiv = document.getElementById('jeuResult');
+            resDiv.innerHTML = `<strong>${jeu.nom}</strong><br><small>${jeu.desc}</small>`;
+            resDiv.classList.add('show');
+        }
+
+        // --- ACROSTICHE ---
+        const dictionnaire = {
+            'a':['Amour','Âme'],'b':['Beauté','Baiser'],'c':['Cœur','Chérie'],'d':['Désir'],'e':['Éclat','Étoile'],
+            'f':['Fidélité'],'g':['Grâce'],'h':['Harmonie'],'i':['Infini','Idylle'],'j':['Joie'],
+            'l':['Lumière'],'m':['Magie','Merveille'],'n':['Nuage'],'o':['Océan'],'p':['Passion'],
+            'r':['Rêve','Romance'],'s':['Soleil','Secret'],'t':['Tendresse'],'u':['Unique'],'v':['Vie']
+        };
+
+        function genererAccrostiche() {
+            const nom = document.getElementById('nomAccrostiche').value.toLowerCase().trim();
+            if(!nom) return;
+            let result = '';
+            for(let char of nom) {
+                const mot = dictionnaire[char] ? dictionnaire[char][Math.floor(Math.random() * dictionnaire[char].length)] : char.toUpperCase();
+                result += `<strong>${char.toUpperCase()}</strong>${mot.slice(1)}<br>`;
+            }
+            const resDiv = document.getElementById('accrosticheResult');
+            resDiv.innerHTML = result;
+            resDiv.classList.add('show');
+        }
+
+        // --- CHAT ---
+        let pseudoMoi = 'Moi 💕';
+        let messages = JSON.parse(localStorage.getItem('chatCouple')) || [];
+
+        function afficherMessages() {
+            const container = document.getElementById('chatMessages');
+            container.innerHTML = '';
+            messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = `message ${msg.pseudo === pseudoMoi ? 'moi' : 'ami'}`;
+                div.innerHTML = `<div class="message-bulle">${msg.texte}</div><div class="message-time">${msg.time}</div>`;
+                container.appendChild(div);
+            });
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function envoyerMessage() {
+            const input = document.getElementById('chatInput');
+            const texte = input.value.trim();
+            if (!texte) return;
+
+            const maintenant = new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+            messages.push({ pseudo: pseudoMoi, texte, time: maintenant });
+            localStorage.setItem('chatCouple', JSON.stringify(messages));
+            
+            input.value = '';
+            afficherMessages();
+        }
+
+        function clearChat() {
+            if (confirm('Supprimer tout l\'historique ? 💔')) {
+                messages = [];
+                localStorage.removeItem('chatCouple');
+                afficherMessages();
+            }
+        }
+
+        document.getElementById('chatInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') envoyerMessage(); });
+
+        // Init
+        afficherMessages();
+    </script>
+</body>
+</html>
